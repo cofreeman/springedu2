@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    * {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<h1>2조의 REST API 실습</h1>
+<hr>
+<button id="all-btn">둘리와 친구들 보기</button>
+
+<div id="list" style="display: none">
+  <hr>
+  <div id="button-container"></div>
+  <hr>
+  <div id="info-container"></div>
+
+</div>
+
+
+<script>
+  let allbtn = document.getElementById('all-btn');
+
+  allbtn.addEventListener('click', function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/all');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              // 요청이 성공적으로 완료되었을 때 실행될 코드
+              console.log('요청 성공:', xhr.responseText);
+              var response = JSON.parse(xhr.responseText);
+              var links = response._embedded.comicActorModelList;
+
+              // 각 링크로 이동하는 버튼을 동적으로 생성
+              var buttonContainer = document.getElementById('button-container');
+              var list = document.getElementById('list');
+              list.style.display = "block";
+              for (var i = 0; i < links.length; i++) {
+                var link = links[i]._links;
+                var href = Object.values(link)[0].href;
+
+                var button = document.createElement('button');
+                button.textContent = Object.keys(link)[0];
+                button.addEventListener('click', (function(href) {
+                  return function() {
+                    console.log(href);
+                    var infoXhr = new XMLHttpRequest();
+                    infoXhr.open('GET', href);
+                    infoXhr.onreadystatechange = function() {
+                      if (infoXhr.readyState === XMLHttpRequest.DONE) {
+                        if (infoXhr.status === 200) {
+                          // 정보를 성공적으로 가져왔을 때 실행될 코드
+                          console.log('정보 가져오기 성공:', infoXhr.responseText);
+                          var infoResponse = JSON.parse(infoXhr.responseText);
+
+                          // 정보를 화면에 보여주는 코드
+                          var infoContainer = document.getElementById('info-container');
+                          infoContainer.innerHTML = ''; // 기존 내용을 초기화
+
+                          var nameElement = document.createElement('div');
+                          nameElement.textContent = infoResponse.name;
+                          infoContainer.appendChild(nameElement);
+
+                          var addrElement = document.createElement('div');
+                          addrElement.textContent = infoResponse.addr;
+                          infoContainer.appendChild(addrElement);
+
+                          var imageElement = document.createElement('img');
+                          imageElement.src = "/images/" + infoResponse.image;
+                          infoContainer.appendChild(imageElement);
+
+                        } else {
+                          // 정보 가져오기 실패했을 때 실행될 코드
+                          console.log('정보 가져오기 실패:', infoXhr.status);
+                        }
+                      }
+                    };
+                    infoXhr.send();
+                  };
+                })(href));
+
+                buttonContainer.appendChild(button);
+              }
+
+            } else {
+              // 요청이 실패했을 때 실행될 코드
+              console.log('요청 실패:', xhr.status);
+            }
+          }
+        }
+        ;
+        xhr.send();
+      }
+  )
+</script>
+</body>
+</html>

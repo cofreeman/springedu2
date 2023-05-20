@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.example.springedu2","springjpa","springrest"})
-@EnableJpaRepositories(basePackages = {"springjpa.exam.repository"})
-@EntityScan(basePackages = {"springjpa.exam.entity","springrest.exam.domain"})
+@EnableJpaRepositories(basePackages = {"springjpa.exam.repository","springrest.exam.repository"})
+@EntityScan(basePackages = {"springjpa.exam.entity","springrest.exam.domain","springrest.exam.entity"})
 public class Springedu2Application {
 
     public static void main(String[] args) {

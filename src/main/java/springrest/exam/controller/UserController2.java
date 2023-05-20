@@ -36,15 +36,19 @@ public class UserController2 {
     }
 
     @GetMapping("/h_users/{id}")
-    public EntityModel<User> retrieveUser(@PathVariable  int id){
+    public User retrieveUser(@PathVariable  int id){
         User user = service.findOne(id);
 
         if(user==null){
             throw new UserNotFoundException(String.format("ID[%s] not found", id));
         }
-        EntityModel<User> model = EntityModel.of(user);
+//        EntityModel<User> model = EntityModel.of(user);
+//        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+//        model.add(linkTo.withRel("all-users"));
+
+        User model  = user;
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
-        model.add(linkTo.withRel("all-users"));
+        model.add(linkTo.withRel("all-users-new"));
         return model;
     }
 
